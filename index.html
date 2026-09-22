@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarjeta virtual para Keyth</title>
+  <style>
+    :root {
+      --sun: #ffd84d;
+      --sun-strong: #f5b700;
+      --petal: #ffe77a;
+      --petal-soft: #fff7c8;
+      --leaf: #74c96c;
+      --leaf-dark: #3a8b4c;
+      --bg-1: #fffef6;
+      --bg-2: #fff7b8;
+      --bg-3: #f9dc67;
+      --ink: #4a3400;
+      --muted: #7a5b12;
+      --panel: rgba(255,255,255,0.82);
+      --gold: #d79f00;
+      --shadow: rgba(126, 96, 12, 0.2);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
+      color: var(--ink);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 30px 18px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 38%, var(--bg-3) 100%);
+    }
+
+    .floating {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      width: 18px;
+      height: 24px;
+      background: linear-gradient(180deg, #fff7cf, #ffd54d);
+      border-radius: 60% 0 60% 0;
+      opacity: 0.8;
+      box-shadow: 0 0 10px rgba(255, 214, 77, 0.35);
+      animation: float 9s linear infinite;
+    }
+
+    .petal:nth-child(1) { left: 12%; top: 12%; animation-delay: 0s; }
+    .petal:nth-child(2) { left: 20%; top: 68%; animation-delay: 1.2s; }
+    .petal:nth-child(3) { right: 18%; top: 14%; animation-delay: 2.2s; }
+    .petal:nth-child(4) { right: 24%; top: 70%; animation-delay: 3.3s; }
+    .petal:nth-child(5) { left: 52%; top: 10%; animation-delay: 4s; }
+    .petal:nth-child(6) { left: 72%; top: 62%; animation-delay: 5s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+      18% { opacity: 0.9; }
+      100% { transform: translateY(-90px) rotate(180deg) scale(1.2); opacity: 0; }
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 48%, rgba(255,255,255,0.5), transparent 42%);
+      pointer-events: none;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: min(95vw, 760px);
+      height: min(95vw, 760px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: spin 20s linear infinite;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .flower-ring {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: min(94vw, 820px);
+      height: min(94vw, 820px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.95;
+    }
+
+    .sunflower {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      left: 50%;
+      top: 50%;
+      transform-origin: center center;
+    }
+
+    .sunflower .head {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff5ba 0%, #ffd84d 42%, #f7bf00 100%);
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.16);
+    }
+
+    .sunflower .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #d69000;
+      box-shadow: 0 0 10px rgba(214, 144, 0, 0.7);
+    }
+
+    .sunflower .stem {
+      position: absolute;
+      width: 6px;
+      height: 46px;
+      left: 50%;
+      top: 62px;
+      transform: translateX(-50%);
+      background: linear-gradient(var(--leaf), var(--leaf-dark));
+      border-radius: 8px;
+    }
+
+    .sunflower .leaf {
+      position: absolute;
+      width: 18px;
+      height: 12px;
+      background: var(--leaf);
+      border-radius: 100% 0 100% 0;
+      top: 76px;
+    }
+
+    .sunflower .leaf.left { left: 18px; transform: rotate(-28deg); }
+    .sunflower .leaf.right { right: 18px; transform: scaleX(-1) rotate(-28deg); }
+
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .card {
+      position: relative;
+      width: min(100%, 640px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.93), rgba(255,248,215,0.88));
+      border: 2px solid rgba(247, 191, 0, 0.8);
+      border-radius: 36px;
+      box-shadow: 0 30px 70px rgba(120, 92, 10, 0.22), 0 12px 26px rgba(255, 208, 70, 0.28), inset 0 2px 0 rgba(255,255,255,0.8);
+      padding: 32px 28px 28px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      z-index: 5;
+    }
+
+    .mini-tag {
+      display: inline-block;
+      font-size: 0.76rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--muted);
+      background: rgba(255, 216, 77, 0.23);
+      border: 1px solid rgba(247, 191, 0, 0.7);
+      border-radius: 999px;
+      padding: 8px 14px;
+    }
+
+    .flower {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 22px auto 14px;
+      animation: sway 6s ease-in-out infinite;
+      filter: drop-shadow(0 12px 18px rgba(247, 191, 0, 0.22));
+    }
+
+    .flower .petals {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--petal-soft) 0%, var(--petal) 35%, var(--sun) 92%);
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.2);
+    }
+
+    .flower .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 26px;
+      height: 26px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff9d2 0%, var(--sun-strong) 100%);
+      box-shadow: 0 0 20px rgba(247, 191, 0, 0.8);
+      z-index: 2;
+    }
+
+    .flower .stem {
+      position: absolute;
+      left: 50%;
+      bottom: -54px;
+      width: 8px;
+      height: 58px;
+      transform: translateX(-50%);
+      background: linear-gradient(var(--leaf), var(--leaf-dark));
+      border-radius: 8px;
+    }
+
+    .flower .leaf {
+      position: absolute;
+      width: 22px;
+      height: 16px;
+      background: var(--leaf);
+      border-radius: 100% 0 100% 0;
+      bottom: -34px;
+    }
+
+    .flower .leaf.left { left: 20%; transform: rotate(-28deg); }
+    .flower .leaf.right { right: 20%; transform: scaleX(-1) rotate(-28deg); }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-7deg); }
+      50% { transform: rotate(8deg); }
+    }
+
+    h1 {
+      margin: 10px 0 10px;
+      font-size: clamp(2.1rem, 7vw, 3.4rem);
+      color: var(--sun-strong);
+      letter-spacing: 0.06em;
+    }
+
+    .text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.8;
+      max-width: 420px;
+      margin-inline: auto;
+    }
+
+    .message {
+      margin-top: 18px;
+      padding: 18px 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,247,190,0.8));
+      border: 2px solid rgba(247, 191, 0, 0.4);
+      border-radius: 20px;
+      text-align: left;
+    }
+
+    .message p {
+      margin: 0;
+      line-height: 1.8;
+      color: var(--ink);
+      font-size: 1.02rem;
+    }
+
+    .message strong {
+      color: var(--sun-strong);
+    }
+
+    .signature {
+      margin-top: 16px;
+      font-weight: 800;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .hidden-message {
+      display: none;
+      opacity: 0;
+      transform: translateY(16px) scale(0.96);
+      transform-origin: center top;
+    }
+
+    .hidden-message.show {
+      display: block;
+      animation: revealCard 0.7s ease forwards;
+    }
+
+    @keyframes revealCard {
+      0% {
+        opacity: 0;
+        transform: perspective(800px) rotateX(-18deg) translateY(18px) scale(0.96);
+        filter: blur(2px);
+      }
+      55% {
+        opacity: 1;
+        transform: perspective(800px) rotateX(4deg) translateY(-4px) scale(1.01);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        transform: perspective(800px) rotateX(0deg) translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .reveal-btn,
+    .close-btn {
+      border: none;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .reveal-btn {
+      background: linear-gradient(135deg, #f4c300, #ffe374 45%, #f7bf00);
+      color: #4a3300;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-size: 1.02rem;
+      letter-spacing: 0.04em;
+      box-shadow: 0 14px 24px rgba(247, 191, 0, 0.32), inset 0 2px 0 rgba(255,255,255,0.6), 0 0 0 4px rgba(247, 191, 0, 0.12);
+    }
+
+    .close-btn {
+      background: rgba(255,255,255,0.85);
+      color: var(--muted);
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(247, 191, 0, 0.5);
+      box-shadow: 0 8px 18px rgba(120, 92, 10, 0.08);
+    }
+
+    .reveal-btn:hover,
+    .close-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      filter: brightness(1.04);
+    }
+
+    .closing-scene {
+      display: none;
+      margin-top: 22px;
+      text-align: center;
+      animation: reveal 0.5s ease;
+    }
+
+    .closing-scene.show {
+      display: block;
+    }
+
+    .closing-text {
+      margin: 0 0 16px;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--sun-strong);
+      letter-spacing: 0.04em;
+      text-shadow: 0 4px 16px rgba(247, 191, 0, 0.14);
+    }
+
+    .bouquet {
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      gap: 10px;
+      margin-top: 14px;
+      min-height: 120px;
+      filter: drop-shadow(0 12px 16px rgba(247, 191, 0, 0.18));
+    }
+
+    .bouquet-flower {
+      position: relative;
+      width: 46px;
+      height: 70px;
+    }
+
+    .bouquet-flower .head {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6c5 0%, #ffe172 35%, #f7bf00 100%);
+      box-shadow: 0 0 18px rgba(247, 191, 0, 0.35);
+    }
+
+    .bouquet-flower .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #d69000;
+    }
+
+    .bouquet-flower .stem {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 5px;
+      height: 34px;
+      transform: translateX(-50%);
+      background: linear-gradient(var(--leaf), var(--leaf-dark));
+      border-radius: 8px;
+    }
+
+    .bouquet-flower .leaf {
+      position: absolute;
+      width: 14px;
+      height: 10px;
+      background: var(--leaf);
+      border-radius: 100% 0 100% 0;
+      bottom: 18px;
+    }
+
+    .bouquet-flower .leaf.left { left: 10px; transform: rotate(-30deg); }
+    .bouquet-flower .leaf.right { right: 10px; transform: scaleX(-1) rotate(-30deg); }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 24px 16px 20px; }
+      .flower { width: 120px; height: 120px; }
+      .mini-tag { letter-spacing: 0.12em; }
+      .toggle-row { gap: 8px; }
+      .reveal-btn, .close-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating" aria-hidden="true">
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+  </div>
+
+  <div class="orbit" aria-hidden="true">
+    <div class="sunflower" style="transform: rotate(0deg) translateX(280px) rotate(-0deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(60deg) translateX(280px) rotate(-60deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(120deg) translateX(280px) rotate(-120deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(180deg) translateX(280px) rotate(-180deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(240deg) translateX(280px) rotate(-240deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(300deg) translateX(280px) rotate(-300deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+  </div>
+
+  <div class="flower-ring" aria-hidden="true">
+    <div class="sunflower" style="transform: rotate(30deg) translateX(260px) rotate(-30deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(90deg) translateX(260px) rotate(-90deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(150deg) translateX(260px) rotate(-150deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(210deg) translateX(260px) rotate(-210deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(270deg) translateX(260px) rotate(-270deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="transform: rotate(330deg) translateX(260px) rotate(-330deg) translateY(-110px);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+
+    <div class="sunflower" style="left: 8%; top: 12%; transform: scale(0.9) rotate(-12deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="left: 14%; top: 48%; transform: scale(0.8) rotate(18deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="left: 12%; top: 78%; transform: scale(0.85) rotate(-20deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="right: 8%; top: 12%; transform: scale(0.9) rotate(12deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="right: 12%; top: 48%; transform: scale(0.8) rotate(-18deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="right: 10%; top: 78%; transform: scale(0.85) rotate(20deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="left: 34%; top: 6%; transform: scale(0.75) rotate(8deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="right: 34%; top: 6%; transform: scale(0.75) rotate(-8deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="left: 34%; bottom: 8%; transform: scale(0.75) rotate(-10deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+    <div class="sunflower" style="right: 34%; bottom: 8%; transform: scale(0.75) rotate(10deg);">
+      <div class="head"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+  </div>
+
+  <main class="card">
+    <div class="mini-tag">Tarjeta virtual</div>
+
+    <div class="flower" aria-label="Flor amarilla">
+      <div class="petals"></div>
+      <div class="center"></div>
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+    </div>
+
+    <h1>Keyth</h1>
+    <p class="text">Como una flor bajo el sol, tú iluminas todo a tu alrededor.</p>
+
+    <div class="toggle-row">
+      <button class="reveal-btn" id="revealBtn" type="button">Abrir la carta</button>
+      <button class="close-btn hidden" id="closeBtn" type="button">Cerrar</button>
+    </div>
+
+    <div class="hidden-message" id="hiddenMessage">
+      <div class="message">
+        <p>
+          <strong>Esto fue hecho con mucho cariño</strong>, porque aunque aún no te conozco en persona, siento que ya hay algo muy bonito en tu presencia. Eres una persona especial, amable y con una luz que se nota desde lejos. Gracias por ser tú y por alegrar este pequeño espacio virtual con esa energía tan linda.
+        </p>
+        <div class="signature">Con cariño 🌼</div>
+      </div>
+
+      <div class="message" style="margin-top: 16px;">
+        <p>
+          Eres una luz que merece ser celebrada. Gracias por existir y por ser tan especial para mí, aunque todavía no hayamos coincidido en persona. 💛
+        </p>
+      </div>
+    </div>
+
+    <div class="closing-scene" id="closingScene">
+      <p class="closing-text">Nunca serás espectadora.</p>
+      <div class="bouquet" aria-label="Ramo de girasoles">
+        <div class="bouquet-flower">
+          <div class="head"></div>
+          <div class="center"></div>
+          <div class="stem"></div>
+          <div class="leaf left"></div>
+          <div class="leaf right"></div>
+        </div>
+        <div class="bouquet-flower">
+          <div class="head"></div>
+          <div class="center"></div>
+          <div class="stem"></div>
+          <div class="leaf left"></div>
+          <div class="leaf right"></div>
+        </div>
+        <div class="bouquet-flower">
+          <div class="head"></div>
+          <div class="center"></div>
+          <div class="stem"></div>
+          <div class="leaf left"></div>
+          <div class="leaf right"></div>
+        </div>
+        <div class="bouquet-flower">
+          <div class="head"></div>
+          <div class="center"></div>
+          <div class="stem"></div>
+          <div class="leaf left"></div>
+          <div class="leaf right"></div>
+        </div>
+        <div class="bouquet-flower">
+          <div class="head"></div>
+          <div class="center"></div>
+          <div class="stem"></div>
+          <div class="leaf left"></div>
+          <div class="leaf right"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const revealBtn = document.getElementById('revealBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const hiddenMessage = document.getElementById('hiddenMessage');
+    const closingScene = document.getElementById('closingScene');
+
+    function openCard() {
+      hiddenMessage.classList.add('show');
+      closeBtn.classList.remove('hidden');
+      revealBtn.classList.add('hidden');
+      closingScene.classList.remove('show');
+    }
+
+    function closeCard() {
+      hiddenMessage.classList.remove('show');
+      closeBtn.classList.add('hidden');
+      revealBtn.classList.remove('hidden');
+      closingScene.classList.add('show');
+    }
+
+    revealBtn.addEventListener('click', openCard);
+    closeBtn.addEventListener('click', closeCard);
+  </script>
+</body>
+</html>
